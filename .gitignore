@@ -1,0 +1,14 @@
+*.iml
+.gradle/
+/local.properties
+/keystore.properties
+*.keystore
+/.idea/
+.DS_Store
+build/
+/captures
+.externalNativeBuild
+.cxx
+# готовые APK в корне (копии из app/build/outputs)
+/video-viewer-tv-debug.apk
+/video-viewer-tv-release.apk
