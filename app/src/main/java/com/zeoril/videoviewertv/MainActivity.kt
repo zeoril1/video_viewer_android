@@ -127,9 +127,16 @@ class MainActivity : Activity() {
     private fun storedBase(): String? =
         prefs().getString(Prefs.KEY_URL, null)?.trim()?.takeIf { it.isNotEmpty() }
 
+    /**
+     * Приводим адрес к рабочему виду: схема http://, если не указана, и порт
+     * 8080 — если не указан (сервер по умолчанию слушает именно его).
+     * Порт не дописываем для https (там 443) и когда в адресе есть путь.
+     */
     private fun normalizedBase(raw: String): String {
         var b = raw.trim().trimEnd('/')
         if (!b.startsWith("http://") && !b.startsWith("https://")) b = "http://$b"
+        val uri = Uri.parse(b)
+        if (uri.port == -1 && uri.scheme == "http" && uri.path.isNullOrEmpty()) b = "$b:8080"
         return b
     }
 

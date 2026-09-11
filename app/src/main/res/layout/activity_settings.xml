@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:hint="192.168.1.10:8080"
+        android:hint="192.168.0.10"
         android:imeOptions="actionDone"
         android:inputType="textUri"
         android:selectAllOnFocus="true"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="Введите IP/хост и порт вашего сервера. Протокол http:// добавится автоматически."
+        android:text="IP или домен сервера. Протокол и порт 8080 подставляются сами: 192.168.0.10 = 192.168.0.10:8080. Для доступа из интернета — https://ваш-домен"
         android:textColor="#BBBBBB"
         android:textSize="16sp" />
 

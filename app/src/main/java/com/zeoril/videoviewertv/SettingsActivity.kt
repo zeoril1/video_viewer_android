@@ -28,7 +28,7 @@ class SettingsActivity : Activity() {
         save.setOnClickListener {
             val v = input.text.toString().trim()
             if (v.isEmpty()) {
-                hint.text = "Введите адрес сервера, например 192.168.1.10:8080"
+                hint.text = "Введите адрес сервера, например 192.168.0.10 (порт 8080 подставится сам)"
                 return@setOnClickListener
             }
             getSharedPreferences(Prefs.NAME, MODE_PRIVATE)
