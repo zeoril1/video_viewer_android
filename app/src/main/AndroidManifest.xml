@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <!-- Главный экран: WebView с веб-интерфейсом вашего сервера. -->
+        <!-- Главный экран: WebView с веб-интерфейсом kino.zeoril.ru. -->
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
@@ -34,13 +34,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Экран настроек: адрес сервера. Открывается кнопкой MENU на пульте
-             или с первого запуска, если адрес ещё не задан. -->
-        <activity
-            android:name=".SettingsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-            android:exported="true"
-            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

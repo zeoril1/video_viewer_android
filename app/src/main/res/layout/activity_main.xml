@@ -51,14 +51,6 @@
                 android:text="Повторить"
                 android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/btnSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:minWidth="200dp"
-                android:text="Настройки"
-                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

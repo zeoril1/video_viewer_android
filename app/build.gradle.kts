@@ -23,8 +23,8 @@ android {
         // Android TV: минимально поддерживаемые устройства — Android 6.0+.
         minSdk = 23
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     signingConfigs {

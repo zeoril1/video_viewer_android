@@ -31,7 +31,6 @@ class MainActivity : Activity() {
     private lateinit var web: WebView
     private lateinit var errorBox: View
     private lateinit var errorText: TextView
-    private var currentBase: String? = null
     private var backHandled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +41,9 @@ class MainActivity : Activity() {
         errorBox = findViewById(R.id.errorOverlay)
         errorText = findViewById(R.id.errorText)
         findViewById<Button>(R.id.btnRetry).setOnClickListener { loadCurrent() }
-        findViewById<Button>(R.id.btnSettings).setOnClickListener { openSettings() }
 
         setupWebView()
+        loadCurrent()
     }
 
     // ------------------------------------------------------------------ WebView
@@ -71,7 +70,7 @@ class MainActivity : Activity() {
         // берём его как базу, чтобы просто дописать маркер.
         val base = s.userAgentString
         if (!base.contains("VVTV")) {
-            s.userAgentString = "$base ${Prefs.TV_UA_MARKER}"
+            s.userAgentString = "$base ${AppConfig.TV_UA_MARKER}"
         }
 
         // Куки (httpOnly-сессия входа) сохраняются между запусками.
@@ -104,8 +103,7 @@ class MainActivity : Activity() {
                     val desc = error?.description?.toString().orEmpty()
                     showError(
                         "Не удалось загрузить сервер\n($code: $desc)\n\n" +
-                            "Проверьте адрес в настройках и доступность сервера " +
-                            "в этой же сети."
+                            "Проверьте подключение к интернету и доступность kino.zeoril.ru."
                     )
                 }
                 super.onReceivedError(view, request, error)
@@ -122,50 +120,17 @@ class MainActivity : Activity() {
 
     // ------------------------------------------------------------------ Навигация
 
-    private fun prefs() = getSharedPreferences(Prefs.NAME, MODE_PRIVATE)
-
-    private fun storedBase(): String? =
-        prefs().getString(Prefs.KEY_URL, null)?.trim()?.takeIf { it.isNotEmpty() }
-
-    /**
-     * Приводим адрес к рабочему виду: схема http://, если не указана, и порт
-     * 8080 — если не указан (сервер по умолчанию слушает именно его).
-     * Порт не дописываем для https (там 443) и когда в адресе есть путь.
-     */
-    private fun normalizedBase(raw: String): String {
-        var b = raw.trim().trimEnd('/')
-        if (!b.startsWith("http://") && !b.startsWith("https://")) b = "http://$b"
-        val uri = Uri.parse(b)
-        if (uri.port == -1 && uri.scheme == "http" && uri.path.isNullOrEmpty()) b = "$b:8080"
-        return b
-    }
-
     /** Открываем веб-интерфейс в TV-режиме (?tv=1). */
-    private fun tvUrl(base: String): String {
-        val uri = Uri.parse(normalizedBase(base))
+    private fun tvUrl(): String {
+        val uri = Uri.parse(AppConfig.SERVER_URL)
         return uri.buildUpon().appendQueryParameter("tv", "1").build().toString()
     }
 
     private fun loadCurrent() {
-        val b = storedBase()
-        if (b == null) {
-            openSettings()
-            return
-        }
-        currentBase = normalizedBase(b)
-        web.loadUrl(tvUrl(currentBase!!))
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val u = storedBase()
-        if (u == null) {
-            // Первый запуск / адрес не задан — на экран настроек.
-            if (!isFinishing) openSettings()
-        } else if (u != currentBase) {
-            // Вернулись из настроек с новым адресом — перезагружаем.
-            loadCurrent()
-        }
+        errorBox.visibility = View.GONE
+        web.visibility = View.VISIBLE
+        web.requestFocus()
+        web.loadUrl(tvUrl())
     }
 
     private fun showError(text: String) {
@@ -173,10 +138,6 @@ class MainActivity : Activity() {
         errorText.text = text
         errorBox.visibility = View.VISIBLE
         errorBox.requestFocus()
-    }
-
-    private fun openSettings() {
-        startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     // ------------------------------------------------------- Медиа-клавиши
@@ -218,11 +179,6 @@ class MainActivity : Activity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        // MENU на пультах, где он есть, открывает настройки сервера.
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            openSettings()
-            return true
-        }
         // Медиа-клавиши пульта (play/pause/ff/rw) → управление плеером на странице.
         // WebView сам не переводит их в <video>, поэтому пробрасываем в tv.js/app.js.
         when (keyCode) {
